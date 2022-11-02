@@ -17,6 +17,23 @@ You'll need to create a new node server. Open a new terminal within the project 
 1. Initialize a new project: `npm i`
 2. run the development server with `npm run dev`
 
+### Input to test
+#### Image Url
+1. https://th.bing.com/th/id/R.42038ff03c4f495b446d651e57b7da55?rik=bg94Iw8tIc4QLQ&pid=ImgRaw&r=0
+2. https://th.bing.com/th/id/R.433a1fe398e2e5cd11ca3417ea3fd26c?rik=sz5ApcCgojcrsg&riu=http%3a%2f%2fchangeidentity.org%2fwp-content%2fuploads%2f2015%2f07%2fidentity.jpg&ehk=iTXHnhWQXk3IGk9goQYq7NtSbDMWkZULgIMaNBM3DIc%3d&risl=&pid=ImgRaw&r=0&sres=1&sresct=1
+3. https://ded9.com/wp-content/uploads/2021/05/Redux-Framework.jpg
+4. https://www.motortrend.com/uploads/sites/11/2014/04/2014-ferrari-laferrari-front-three-quarters-motion-11.jpg?fit=around%7C875:492
+5. https://automacha.com/wp-content/uploads/2019/02/Lamborghini-Urus-12-620x350.jpg
+6. https://1cars.org/wp-content/uploads/2015/03/Lamborghini-Veneno-800x500.jpg
+7. https://www.carscoops.com/wp-content/uploads/2021/07/Lamborghini-Gallardo-1a.jpg
+### Elastic Beanstalk URL
+1. http://image-filter-service.us-east-1.elasticbeanstalk.com/filteredimage?image_url=https://th.bing.com/th/id/R.42038ff03c4f495b446d651e57b7da55?rik=bg94Iw8tIc4QLQ&pid=ImgRaw&r=0
+2. http://image-filter-service.us-east-1.elasticbeanstalk.com/filteredimage?image_url=https://th.bing.com/th/id/R.433a1fe398e2e5cd11ca3417ea3fd26c?rik=sz5ApcCgojcrsg&riu=http%3a%2f%2fchangeidentity.org%2fwp-content%2fuploads%2f2015%2f07%2fidentity.jpg&ehk=iTXHnhWQXk3IGk9goQYq7NtSbDMWkZULgIMaNBM3DIc%3d&risl=&pid=ImgRaw&r=0&sres=1&sresct=1
+3. http://image-filter-service.us-east-1.elasticbeanstalk.com/filteredimage?image_url=https://ded9.com/wp-content/uploads/2021/05/Redux-Framework.jpg
+4. http://image-filter-service.us-east-1.elasticbeanstalk.com/filteredimage?image_url=https://www.motortrend.com/uploads/sites/11/2014/04/2014-ferrari-laferrari-front-three-quarters-motion-11.jpg?fit=around%7C875:492
+5. http://image-filter-service.us-east-1.elasticbeanstalk.com/filteredimage?image_url=https://automacha.com/wp-content/uploads/2019/02/Lamborghini-Urus-12-620x350.jpg
+6. http://image-filter-service.us-east-1.elasticbeanstalk.com/filteredimage?image_url=https://1cars.org/wp-content/uploads/2015/03/Lamborghini-Veneno-800x500.jpg
+7. http://image-filter-service.us-east-1.elasticbeanstalk.com/filteredimage?image_url=https://www.carscoops.com/wp-content/uploads/2021/07/Lamborghini-Gallardo-1a.jpg
 ### Create a new endpoint in the server.ts file
 
 The starter code has a task for you to complete an endpoint in `./src/server.ts` which uses query parameter to download an image from a public URL, filter the image, and return the result.
