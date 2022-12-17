@@ -11,7 +11,7 @@ import {CreateAttachmentPresignedUrl} from "../../../requests/CreateAttachmentPr
 const logger = createLogger("Todo BL")
 const todoAccessLayer = new TodosAccess()
 
-export const createTodo = async (userId?: string, request?: CreateTodoRequest) => {
+export const createTodo = async (userId: string, request?: CreateTodoRequest) => {
     logger.info("BL: createTodo")
 
     if (request) {
@@ -30,7 +30,7 @@ export const createTodo = async (userId?: string, request?: CreateTodoRequest) =
     }
 }
 
-export const getTodos = async (userId?: string) : Promise<GetToDoResponse[]> => {
+export const getTodos = async (userId: string) : Promise<GetToDoResponse[]> => {
     logger.info("BL: getTodos")
 
     const result = await todoAccessLayer.getToDos(userId);
@@ -38,14 +38,14 @@ export const getTodos = async (userId?: string) : Promise<GetToDoResponse[]> => 
     return result as GetToDoResponse[]
 }
 
-export const updateTodo = async (userId?: string, todoId?: string, request?: UpdateTodoRequest) => {
+export const updateTodo = async (userId: string, todoId?: string, request?: UpdateTodoRequest) => {
     await todoAccessLayer.updateToDo(userId, todoId, request);
 }
 
-export const deleteTodo = async (userId?: string, request?: DeleteTodoRequest) => {
+export const deleteTodo = async (userId: string, request?: DeleteTodoRequest) => {
     await todoAccessLayer.deleteTodo(userId, request.id);
 }
 
-export const createAttachmentPresignedUrl = async (userId?: string, request?: CreateAttachmentPresignedUrl): Promise<string> => {
+export const createAttachmentPresignedUrl = async (userId: string, request?: CreateAttachmentPresignedUrl): Promise<string> => {
     return await todoAccessLayer.createAttachmentPresignedUrl(userId, request.todoId, request.attachmentId)
 }

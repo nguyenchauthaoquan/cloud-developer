@@ -6,8 +6,7 @@ service: serverless-todo-app
 plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
-  - serverless-plugin-tracing
-  - serverless-reqvalidator-plugin
+  - serverless-aws-documentation
 
 provider:
   name: aws
@@ -43,6 +42,20 @@ provider:
             - xray:PutTelemetryRecords
             - xray:PutTraceSegments
           Resource: "*"
+custom:
+  documentation:
+    api:
+      info:
+        version: '1.0.0'
+        title: serverless-api
+        description: serverless-api
+    models:
+      - name: CreateTodoRequest
+        contentType: "application/json"
+        schema: ${file(models/create-todo-model.json)}
+      - name: UpdateTodoRequest
+        contentType: "application/json"
+        schema: ${file(models/update-todo-model.json)}
 
 functions:
   Auth:
@@ -58,12 +71,15 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
-          reqValidatorName: RequestBodyValidator
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:Query
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+      - Effect: Allow
+        Action:
+          - s3:GetObject
+        Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
       - Effect: Allow
         Action:
           - xray:PutTraceSegments
@@ -83,10 +99,14 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
-          reqValidatorName: RequestBodyValidator
           request:
-            schemas:
-              application/json: ${file(models/create-todo-model.json)}
+            schema:
+              'application/json': CreateTodoRequest
+          documentation:
+            summary: Create a new todo
+            description: Create a new todo
+            requestModels:
+              'application/json': ${file(models/create-todo-model.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -107,13 +127,22 @@ functions:
       - http:
           method: patch
           path: todos/{todoId}
-          reqValidatorName: RequestBodyValidator
+          cors: true
+          authorizer: Auth
+          request:
+            schema:
+              'application/json': ${file(models/update-todo-model.json)}
+          documentation:
+            summary: Update todo
+            description: Update todo
+            requestModels:
+              'application/json': UpdateTodoRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:UpdateItem
           - dynamodb:GetItem
-        Resource: !GetAtt TodosTable.Arn
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
       - Effect: Allow
         Action:
           - xray:PutTraceSegments
@@ -129,13 +158,14 @@ functions:
       - http:
           method: delete
           path: todos/{todoId}
-          reqValidatorName: RequestBodyValidator
+          cors: true
+          authorizer: Auth
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:DeleteItem
           - dynamodb:GetItem
-        Resource: !GetAtt TodosTable.Arn
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
       - Effect: Allow
         Action:
           - xray:PutTraceSegments
@@ -151,13 +181,15 @@ functions:
       - http:
           method: post
           path: todos/{todoId}/attachment
+          cors: true
+          authorizer: Auth
     iamRoleStatements:
       - Effect: Allow
         Action:
           - s3:PutObject
           - s3:GetObject
           - '*'
-        Resource: !GetAtt AttachmentsBucket.Arn
+        Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
       - Effect: Allow
         Action:
           - xray:PutTraceSegments
@@ -166,8 +198,9 @@ functions:
           - "*"
       - Effect: Allow
         Action:
-          - dynamodb:UpdateItem 
-        Resource: !GetAtt TodosTable.Arn
+          - dynamodb:UpdateItem
+          - dynamodb:GetItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
 resources:
   Resources:
@@ -182,8 +215,18 @@ resources:
           gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
           gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST,PUT,DELETE'"
         ResponseType: DEFAULT_4XX
-        RestApiId: !Ref ApiGatewayRestApi
-    
+        RestApiId:
+          Ref: ApiGatewayRestApi
+    GatewayResponseDefault5XX:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST,DELETE,PATCH,PUT'"
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: ApiGatewayRestApi
     # TODO: Create a DynamoDB table with local secondary index and a composite key
     TodosTable:
       Type: AWS::DynamoDB::Table
@@ -235,7 +278,7 @@ resources:
     # TODO: Complete the policy below and attach it to the bucket defined above
     # For cross referencing the name of the bucket, use "!Ref AttachmentsBucket"
     BucketPolicy:
-      Type: AWS::S3::BucketPolicy
+      Type: AWS::S3::Bucket
       Properties:
       PolicyDocument:
           Id: MyPolicy
@@ -243,17 +286,8 @@ resources:
           Statement:
             - Principal: '*'
               Effect: Allow
-              Action: 
+              Action:
                 - 's3:GetObject'
                 - 's3:PutObject'
               Resource: 'arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*'
           Bucket: !Ref AttachmentsBucket
-
-    RequestBodyValidator:
-      Type: AWS::ApiGateway::RequestValidator
-      Properties:
-        Name: 'request-body-validator'
-        RestApiId:
-          Ref: ApiGatewayRestApi
-        ValidateRequestBody: true
-        ValidateRequestParameters: false
