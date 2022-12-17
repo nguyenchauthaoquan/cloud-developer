@@ -12,13 +12,13 @@ export const createTodo = async (request: CreateTodoRequest, userId: string) => 
 
     if (request) {
         logger.info("Adding a new todo");
-
+        const todoId = uuid.v4()
         return await todoAccessLayer.createTodo({
             userId: userId,
-            todoId: uuid.v4(),
+            todoId: todoId,
             createdAt: (new Date()).toISOString(),
             done: false,
-            attachmentUrl: null,
+            attachmentUrl: `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${todoId}`,
             ...request
         });
     } else {

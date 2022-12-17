@@ -20,6 +20,6 @@ export class AttachmentUtils {
             Bucket: this.bucketName,
             Key: attachmentId,
             Expires: this.expires
-        });
+        }) as string;
     }
 }

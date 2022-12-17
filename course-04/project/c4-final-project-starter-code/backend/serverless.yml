@@ -196,9 +196,7 @@ functions:
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
       - Effect: Allow
         Action:
-          - s3:PutObject
-          - s3:GetObject
-          - '*'
+          - s3:*
         Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
       - Effect: Allow
         Action:
@@ -262,9 +260,11 @@ resources:
             - AllowedHeaders:
                 - "*"
               AllowedMethods:
-                - GET
-                - POST
-                - PUT
+                  - GET
+                  - PUT
+                  - POST
+                  - DELETE
+                  - HEAD
               AllowedOrigins:
                 - "*"
 
@@ -281,7 +281,6 @@ resources:
               Effect: Allow
               Principal: '*'
               Action:
-                - 's3:GetObject'
-                - 's3:PutObject'
+                - s3:*
               Resource: 'arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*'
         Bucket: !Ref AttachmentsBucket
