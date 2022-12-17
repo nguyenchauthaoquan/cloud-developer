@@ -12,6 +12,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs12.x
+  memorySize: 2048
   lambdaHashingVersion: '20201221'
 
   stage: ${opt:stage, 'dev'}
@@ -61,11 +62,11 @@ custom:
 functions:
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
-
   # TODO: Configure this function - 
   # Provide iamRoleStatements property for performing Actions on DynamoDB
   GetTodos:
     handler: src/lambda/http/getTodos.handler
+    memorySize: 3000
     events:
       - http:
           method: get
@@ -278,7 +279,6 @@ resources:
                   - POST
                   - DELETE
                   - HEAD
-                MaxAge: 3000
 
     # TODO: Complete the policy below and attach it to the bucket defined above
     # For cross referencing the name of the bucket, use "!Ref AttachmentsBucket"
