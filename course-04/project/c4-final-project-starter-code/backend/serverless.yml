@@ -6,6 +6,7 @@ service: serverless-todo-app
 plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
+  - serverless-reqvalidator-plugin
   - serverless-aws-documentation
 
 provider:
@@ -101,7 +102,7 @@ functions:
           authorizer: Auth
           request:
             schema:
-              'application/json': CreateTodoRequest
+              'application/json': ${file(models/create-todo-model.json)}
           documentation:
             summary: Create a new todo
             description: Create a new todo
@@ -204,6 +205,14 @@ functions:
 
 resources:
   Resources:
+    RequestBodyValidator:
+      Type: AWS::ApiGateway::RequestValidator
+      Properties:
+        Name: 'request-body-validator'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
     # Add necessary AWS resources. You will need at least the following AWS resources
     # TODO: Fill the properties
     # Feel free to change the names as you like. 
