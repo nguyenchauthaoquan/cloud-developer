@@ -12,7 +12,7 @@ export class AttachmentUtils {
     private readonly expires: number = parseInt(process.env.SIGNED_URL_EXPIRATION);
 
     constructor() {
-        this.s3 = new XAWS.S3({ signatureVersion: 'v4' })
+        this.s3 = new XAWS.S3({ signatureVersion: 'v4' });
     }
 
     public async createAttachmentPresignedUrl(attachmentId: string): Promise<string> {
@@ -20,6 +20,6 @@ export class AttachmentUtils {
             Bucket: this.bucketName,
             Key: attachmentId,
             Expires: this.expires
-        })
+        });
     }
 }
