@@ -31,7 +31,7 @@ export class TodosAccess {
             Item: todo
         }).promise();
 
-        logger.info(`todo ${todo.name} is not added`);
+        logger.info(`todo ${todo.name} is added`);
 
         return todo;
     }
