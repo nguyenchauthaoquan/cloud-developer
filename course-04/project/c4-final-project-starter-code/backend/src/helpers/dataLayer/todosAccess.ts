@@ -55,7 +55,9 @@ export class TodosAccess {
                 }
             }).promise();
 
-            return attachmentUtil.createAttachmentPresignedUrl(attachmentId);
+            logger.info(`Url ${await attachmentUtil.createAttachmentPresignedUrl(attachmentId)}`);
+
+            return await attachmentUtil.createAttachmentPresignedUrl(attachmentId);
         } else {
             logger.error("Unauthenticated operation");
         }
@@ -76,6 +78,8 @@ export class TodosAccess {
                     ":userId": userId
                 }
             }).promise();
+
+            logger.info(`Query successfully ${todos.Items}`);
 
             return todos.Items as TodoItem[];
         } else {
@@ -105,6 +109,8 @@ export class TodosAccess {
                     ":done": todo.done
                 }
             }).promise();
+
+            logger.info("Updated successfull ", todo)
         } else {
             logger.error(`Unauthenticated operation`);
         }
@@ -121,6 +127,8 @@ export class TodosAccess {
                     userId
                 }
             }).promise();
+
+            logger.info("Delete successful");
         } else {
             logger.error("Unauthenticated operation");
         }

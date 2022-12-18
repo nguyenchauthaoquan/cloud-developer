@@ -18,7 +18,7 @@ export const createTodo = async (request: CreateTodoRequest, userId: string) => 
             todoId: todoId,
             createdAt: (new Date()).toISOString(),
             done: false,
-            attachmentUrl: `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${todoId}`,
+            attachmentUrl: null,
             ...request
         });
     } else {
